@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Simple</title>
+    <style>
+        .calculadora {
+            width: 300px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        #pantalla {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            text-align: right;
+            padding: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .botones {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fff;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .operador {
+            background-color: #ff9500;
+            color: white;
+        }
+
+        .operador:hover {
+            background-color: #e68500;
+        }
+
+        #igual {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #igual:hover {
+            background-color: #45a049;
+        }
+
+        #limpiar {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #limpiar:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculadora">
+        <input type="text" id="pantalla" readonly>
+        <div class="botones">
+            <button onclick="limpiar()" id="limpiar">C</button>
+            <button onclick="agregarCaracter('(')">(</button>
+            <button onclick="agregarCaracter(')')">)</button>
+            <button onclick="agregarCaracter('/')" class="operador">÷</button>
+            
+            <button onclick="agregarCaracter('7')">7</button>
+            <button onclick="agregarCaracter('8')">8</button>
+            <button onclick="agregarCaracter('9')">9</button>
+            <button onclick="agregarCaracter('*')" class="operador">×</button>
+            
+            <button onclick="agregarCaracter('4')">4</button>
+            <button onclick="agregarCaracter('5')">5</button>
+            <button onclick="agregarCaracter('6')">6</button>
+            <button onclick="agregarCaracter('-')" class="operador">-</button>
+            
+            <button onclick="agregarCaracter('1')">1</button>
+            <button onclick="agregarCaracter('2')">2</button>
+            <button onclick="agregarCaracter('3')">3</button>
+            <button onclick="agregarCaracter('+')" class="operador">+</button>
+            
+            <button onclick="agregarCaracter('0')">0</button>
+            <button onclick="agregarCaracter('.')">.</button>
+            <button onclick="borrarUltimo()">←</button>
+            <button onclick="calcular()" id="igual">=</button>
+        </div>
+    </div>
+
+    <script>
+        function agregarCaracter(caracter) {
+            document.getElementById('pantalla').value += caracter;
+        }
+
+        function limpiar() {
+            document.getElementById('pantalla').value = '';
+        }
+
+        function borrarUltimo() {
+            let pantalla = document.getElementById('pantalla');
+            pantalla.value = pantalla.value.slice(0, -1);
+        }
+
+        function calcular() {
+            try {
+                let pantalla = document.getElementById('pantalla');
+                let resultado = eval(pantalla.value);
+                
+                // Verificar si el resultado es un número válido
+                if (isFinite(resultado)) {
+                    // Limitar a 8 decimales si es necesario
+                    pantalla.value = Number(resultado.toFixed(8));
+                } else {
+                    pantalla.value = 'Error';
+                }
+            } catch (error) {
+                document.getElementById('pantalla').value = 'Error';
+            }
+        }
+
+        // Agregar soporte para teclado
+        document.addEventListener('keydown', function(event) {
+            const tecla = event.key;
+            
+            // Prevenir el comportamiento por defecto para las teclas que usamos
+            if (tecla.match(/[0-9\+\-\*\/\(\)\.\=]|Enter|Backspace|Delete/)) {
+                event.preventDefault();
+                
+                if (tecla === 'Enter' || tecla === '=') {
+                    calcular();
+                } else if (tecla === 'Backspace') {
+                    borrarUltimo();
+                } else if (tecla === 'Delete') {
+                    limpiar();
+                } else {
+                    agregarCaracter(tecla);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

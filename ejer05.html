@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario con Validación</title>
+    <style>
+        .formulario {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .campo {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .error {
+            color: #ff0000;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input.invalido {
+            border-color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="formulario">
+        <form id="miFormulario" onsubmit="return validarFormulario(event)">
+            <div class="campo">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre">
+                <div id="errorNombre" class="error">Por favor, ingrese su nombre</div>
+            </div>
+
+            <div class="campo">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" name="email">
+                <div id="errorEmail" class="error">Por favor, ingrese un correo electrónico válido</div>
+            </div>
+
+            <div class="campo">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password">
+                <div id="errorPassword" class="error">La contraseña debe tener al menos 6 caracteres</div>
+            </div>
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        function validarFormulario(event) {
+            event.preventDefault();
+            let esValido = true;
+
+            // Validar nombre
+            const nombre = document.getElementById('nombre');
+            const errorNombre = document.getElementById('errorNombre');
+            if (!nombre.value.trim()) {
+                nombre.classList.add('invalido');
+                errorNombre.style.display = 'block';
+                esValido = false;
+            } else {
+                nombre.classList.remove('invalido');
+                errorNombre.style.display = 'none';
+            }
+
+            // Validar email
+            const email = document.getElementById('email');
+            const errorEmail = document.getElementById('errorEmail');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim() || !emailRegex.test(email.value)) {
+                email.classList.add('invalido');
+                errorEmail.style.display = 'block';
+                esValido = false;
+            } else {
+                email.classList.remove('invalido');
+                errorEmail.style.display = 'none';
+            }
+
+            // Validar contraseña
+            const password = document.getElementById('password');
+            const errorPassword = document.getElementById('errorPassword');
+            if (!password.value || password.value.length < 6) {
+                password.classList.add('invalido');
+                errorPassword.style.display = 'block';
+                esValido = false;
+            } else {
+                password.classList.remove('invalido');
+                errorPassword.style.display = 'none';
+            }
+
+            if (esValido) {
+                alert('¡Formulario enviado correctamente!');
+                document.getElementById('miFormulario').reset();
+            }
+
+            return esValido;
+        }
+    </script>
+</body>
+</html>

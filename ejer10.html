@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Preguntas y Respuestas</title>
+    <style>
+        .contenedor {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;
+        }
+
+        .pregunta {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .pregunta.activa {
+            display: block;
+        }
+
+        .opciones {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .opcion {
+            padding: 10px 15px;
+            background-color: #e9ecef;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .opcion:hover {
+            background-color: #dee2e6;
+        }
+
+        .opcion.correcta {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+
+        .opcion.incorrecta {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .controles {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .resultado {
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .progreso {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="progreso">
+            Pregunta <span id="preguntaActual">1</span> de <span id="totalPreguntas">5</span>
+        </div>
+
+        <div id="preguntas"></div>
+
+        <div class="controles">
+            <button id="siguiente" onclick="siguientePregunta()">Siguiente</button>
+        </div>
+
+        <div id="resultado" class="resultado"></div>
+    </div>
+
+    <script>
+        const preguntas = [
+            {
+                pregunta: "¿Cuál es la capital de España?",
+                opciones: ["Barcelona", "Madrid", "Valencia", "Sevilla"],
+                respuestaCorrecta: 1
+            },
+            {
+                pregunta: "¿En qué año comenzó la Segunda Guerra Mundial?",
+                opciones: ["1939", "1940", "1941", "1938"],
+                respuestaCorrecta: 0
+            },
+            {
+                pregunta: "¿Cuál es el planeta más grande del Sistema Solar?",
+                opciones: ["Marte", "Venus", "Júpiter", "Saturno"],
+                respuestaCorrecta: 2
+            },
+            {
+                pregunta: "¿Quién pintó La Mona Lisa?",
+                opciones: ["Van Gogh", "Leonardo da Vinci", "Pablo Picasso", "Miguel Ángel"],
+                respuestaCorrecta: 1
+            },
+            {
+                pregunta: "¿Cuál es el elemento químico más abundante en la Tierra?",
+                opciones: ["Oxígeno", "Carbono", "Hierro", "Hidrógeno"],
+                respuestaCorrecta: 0
+            }
+        ];
+
+        let preguntaActual = 0;
+        let puntuacion = 0;
+        let respondido = false;
+
+        function iniciarJuego() {
+            const contenedorPreguntas = document.getElementById('preguntas');
+            preguntas.forEach((pregunta, index) => {
+                const divPregunta = document.createElement('div');
+                divPregunta.className = `pregunta ${index === 0 ? 'activa' : ''}`;
+                
+                divPregunta.innerHTML = `
+                    <h2>${pregunta.pregunta}</h2>
+                    <div class="opciones">
+                        ${pregunta.opciones.map((opcion, i) => `
+                            <div class="opcion" onclick="seleccionarRespuesta(${i})">${opcion}</div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                contenedorPreguntas.appendChild(divPregunta);
+            });
+
+            actualizarProgreso();
+        }
+
+        function seleccionarRespuesta(opcionIndex) {
+            if (respondido) return;
+
+            respondido = true;
+            const preguntaDiv = document.querySelector('.pregunta.activa');
+            const opciones = preguntaDiv.querySelectorAll('.opcion');
+            const respuestaCorrecta = preguntas[preguntaActual].respuestaCorrecta;
+
+            opciones.forEach((opcion, index) => {
+                if (index === respuestaCorrecta) {
+                    opcion.classList.add('correcta');
+                }
+                if (index === opcionIndex && index !== respuestaCorrecta) {
+                    opcion.classList.add('incorrecta');
+                }
+            });
+
+            if (opcionIndex === respuestaCorrecta) {
+                puntuacion++;
+            }
+        }
+
+        function siguientePregunta() {
+            if (!respondido) {
+                alert('Por favor, selecciona una respuesta');
+                return;
+            }
+
+            preguntaActual++;
+            respondido = false;
+
+            if (preguntaActual < preguntas.length) {
+                document.querySelector('.pregunta.activa').classList.remove('activa');
+                document.querySelectorAll('.pregunta')[preguntaActual].classList.add('activa');
+                actualizarProgreso();
+            } else {
+                mostrarResultado();
+            }
+        }
+
+        function actualizarProgreso() {
+            document.getElementById('preguntaActual').textContent = preguntaActual + 1;
+            document.getElementById('totalPreguntas').textContent = preguntas.length;
+        }
+
+        function mostrarResultado() {
+            document.querySelector('.pregunta.activa').style.display = 'none';
+            document.querySelector('.controles').style.display = 'none';
+            document.querySelector('.progreso').style.display = 'none';
+
+            const resultadoDiv = document.getElementById('resultado');
+            const porcentaje = (puntuacion / preguntas.length) * 100;
+            
+            resultadoDiv.innerHTML = `
+                <h2>¡Juego terminado!</h2>
+                <p>Has acertado ${puntuacion} de ${preguntas.length} preguntas</p>
+                <p>Puntuación: ${porcentaje}%</p>
+                <button onclick="location.reload()">Jugar de nuevo</button>
+            `;
+            resultadoDiv.style.display = 'block';
+        }
+
+        // Iniciar cuando carga la página
+        iniciarJuego();
+    </script>
+</body>
+</html>

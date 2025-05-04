@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporizador de Cuenta Regresiva</title>
+    <style>
+        .contenedor {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .temporizador {
+            font-size: 4em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .controles {
+            margin: 20px 0;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 80px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #iniciar {
+            background-color: #4CAF50;
+        }
+
+        #pausar {
+            background-color: #f39c12;
+        }
+
+        #reiniciar {
+            background-color: #e74c3c;
+        }
+
+        .etiqueta {
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Temporizador de Cuenta Regresiva</h1>
+        
+        <div class="controles">
+            <div>
+                <input type="number" id="horas" min="0" max="23" value="0">
+                <span class="etiqueta">Horas</span>
+                <input type="number" id="minutos" min="0" max="59" value="0">
+                <span class="etiqueta">Minutos</span>
+                <input type="number" id="segundos" min="0" max="59" value="0">
+                <span class="etiqueta">Segundos</span>
+            </div>
+        </div>
+
+        <div class="temporizador" id="display">00:00:00</div>
+
+        <div class="controles">
+            <button id="iniciar" onclick="iniciarTemporizador()">Iniciar</button>
+            <button id="pausar" onclick="pausarTemporizador()" disabled>Pausar</button>
+            <button id="reiniciar" onclick="reiniciarTemporizador()" disabled>Reiniciar</button>
+        </div>
+    </div>
+
+    <script>
+        let tiempoRestante = 0;
+        let intervalo = null;
+        let pausado = false;
+
+        function actualizarDisplay(tiempo) {
+            const horas = Math.floor(tiempo / 3600);
+            const minutos = Math.floor((tiempo % 3600) / 60);
+            const segundos = tiempo % 60;
+
+            const display = document.getElementById('display');
+            display.textContent = `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+        }
+
+        function iniciarTemporizador() {
+            if (!intervalo) {
+                if (!pausado) {
+                    const horas = parseInt(document.getElementById('horas').value) || 0;
+                    const minutos = parseInt(document.getElementById('minutos').value) || 0;
+                    const segundos = parseInt(document.getElementById('segundos').value) || 0;
+                    tiempoRestante = horas * 3600 + minutos * 60 + segundos;
+                }
+
+                if (tiempoRestante <= 0) return;
+
+                document.getElementById('iniciar').disabled = true;
+                document.getElementById('pausar').disabled = false;
+                document.getElementById('reiniciar').disabled = false;
+
+                intervalo = setInterval(() => {
+                    tiempoRestante--;
+                    actualizarDisplay(tiempoRestante);
+
+                    if (tiempoRestante <= 0) {
+                        clearInterval(intervalo);
+                        intervalo = null;
+                        alert('¡Tiempo terminado!');
+                        reiniciarTemporizador();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pausarTemporizador() {
+            clearInterval(intervalo);
+            intervalo = null;
+            pausado = true;
+            document.getElementById('iniciar').disabled = false;
+            document.getElementById('pausar').disabled = true;
+        }
+
+        function reiniciarTemporizador() {
+            clearInterval(intervalo);
+            intervalo = null;
+            pausado = false;
+            tiempoRestante = 0;
+            actualizarDisplay(0);
+            document.getElementById('iniciar').disabled = false;
+            document.getElementById('pausar').disabled = true;
+            document.getElementById('reiniciar').disabled = true;
+            document.getElementById('horas').value = '0';
+            document.getElementById('minutos').value = '0';
+            document.getElementById('segundos').value = '0';
+        }
+    </script>
+</body>
+</html>

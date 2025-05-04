@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas</title>
+    <style>
+        .contenedor {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .entrada-tarea {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .lista-tareas {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tarea {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: white;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .tarea span {
+            flex: 1;
+        }
+
+        .tarea button {
+            background-color: #ff4444;
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+
+        .tarea button:hover {
+            background-color: #cc0000;
+        }
+
+        .tarea.completada span {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .tarea input[type="checkbox"] {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="entrada-tarea">
+            <input type="text" id="nuevaTarea" placeholder="Agregar nueva tarea...">
+            <button onclick="agregarTarea()">Agregar</button>
+        </div>
+        <ul id="listaTareas" class="lista-tareas">
+            <!-- Las tareas se agregarán aquí dinámicamente -->
+        </ul>
+    </div>
+
+    <script>
+        // Agregar evento para la tecla Enter
+        document.getElementById('nuevaTarea').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                agregarTarea();
+            }
+        });
+
+        function agregarTarea() {
+            const input = document.getElementById('nuevaTarea');
+            const texto = input.value.trim();
+
+            if (texto) {
+                const lista = document.getElementById('listaTareas');
+                const nuevaTarea = document.createElement('li');
+                nuevaTarea.className = 'tarea';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.onclick = function() {
+                    nuevaTarea.classList.toggle('completada');
+                };
+
+                const span = document.createElement('span');
+                span.textContent = texto;
+
+                const botonEliminar = document.createElement('button');
+                botonEliminar.textContent = 'Eliminar';
+                botonEliminar.onclick = function() {
+                    lista.removeChild(nuevaTarea);
+                };
+
+                nuevaTarea.appendChild(checkbox);
+                nuevaTarea.appendChild(span);
+                nuevaTarea.appendChild(botonEliminar);
+                lista.appendChild(nuevaTarea);
+
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

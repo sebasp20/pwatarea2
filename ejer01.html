@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botón con Cambio de Estilo</title>
+    <style>
+        .contenedor {
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            transition: background-color 0.5s ease;
+        }
+
+        .boton-cambio {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .boton-cambio:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .boton-cambio:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div id="miContenedor" class="contenedor">
+        <h2>¡Haz clic en el botón para cambiar el color!</h2>
+        <button class="boton-cambio" onclick="cambiarColor()">Cambiar Color</button>
+    </div>
+
+    <script>
+        function cambiarColor() {
+            const contenedor = document.getElementById('miContenedor');
+            const colores = [
+                '#FFB6C1', // Rosa claro
+                '#98FB98', // Verde claro
+                '#87CEEB', // Azul cielo
+                '#FF0000'  // rojo
+                
+            ];
+            
+            // Obtener un color aleatorio diferente al actual
+            let nuevoColor;
+            do {
+                nuevoColor = colores[Math.floor(Math.random() * colores.length)];
+            } while (nuevoColor === contenedor.style.backgroundColor);
+            
+            contenedor.style.backgroundColor = nuevoColor;
+        }
+    </script>
+</body>
+</html>
